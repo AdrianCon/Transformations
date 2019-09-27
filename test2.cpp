@@ -131,13 +131,11 @@ int main(int argc, char** argv){
 	cout << "1. Translation" << endl;
 	cout << "2. Scaling" << endl;
 	cout << "3. Rotation" << endl;
-	cout << "4. Mirror Reflection" << endl;
-	cout << "5. Shearing" << endl;
-	cout << "6. Exit" << endl;
+	cout << "4. Exit" << endl;
 
 	cin >> choice;
 
-	if (choice == 6) {
+	if (choice == 4) {
 		return 0;
 	}
 
@@ -165,29 +163,14 @@ int main(int argc, char** argv){
 		cout << "Enter the angle for rotation: "; cin >> angle;
 		angleRad = angle * 3.1416 / 180;
 	}
-	else if (choice == 4)
-	{
-		cout << "Enter reflection axis ( x or y ): "; cin >> reflectionAxis;
-	}
-	else if (choice == 5)
-	{
-		cout << "Enter reflection axis ( x or y ): "; cin >> shearingAxis;
-		if (shearingAxis == 'x' || shearingAxis == 'X')
-		{
-			cout << "Enter the shearing factor for X: "; cin >> shearingX;
-		}
-		else
-		{
-			cout << "Enter the shearing factor for Y: "; cin >> shearingY;
-		}
-	}
 	//cout << "\n\nPoints:" << pntX[0] << ", " << pntY[0] << endl;
 	//cout << angleRad;
 
 
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(640, 480);
+
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(1920, 1080);
 	glutInitWindowPosition(100, 150);
 	glutCreateWindow("Extended Basic Transformations");
 	glutDisplayFunc(myDisplay);
