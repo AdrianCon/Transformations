@@ -2,7 +2,12 @@
 #include <math.h>
 #include <iostream>
 #include <vector>
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
+
 using namespace std;
 
 int pntX1, pntY1, choice = 0, edges;
@@ -120,8 +125,7 @@ void myDisplay(void)
    }
 }*/
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
 	cout << "Enter your choice:\n\n" << endl;
 
 	cout << "1. Translation" << endl;
@@ -182,7 +186,7 @@ int main(int argc, char** argv)
 
 
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(100, 150);
 	glutCreateWindow("Extended Basic Transformations");

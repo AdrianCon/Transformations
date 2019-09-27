@@ -1,5 +1,12 @@
-#include <windows.h>
+
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#include <windows.h>
+#endif
+
+
 
 void initGL() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Color de fondo
