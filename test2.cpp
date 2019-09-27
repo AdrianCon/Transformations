@@ -127,13 +127,11 @@ int main(int argc, char** argv)
 	cout << "1. Translation" << endl;
 	cout << "2. Scaling" << endl;
 	cout << "3. Rotation" << endl;
-	cout << "4. Mirror Reflection" << endl;
-	cout << "5. Shearing" << endl;
-	cout << "6. Exit" << endl;
+	cout << "4. Exit" << endl;
 
 	cin >> choice;
 
-	if (choice == 6) {
+	if (choice == 4) {
 		return 0;
 	}
 
