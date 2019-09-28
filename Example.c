@@ -8,12 +8,40 @@
 #include <windows.h>
 #endif
 
-#define NUMBER_OF_VECTORS 22
+#define NUMBER_OF_VECTORS 14
 #define NUMBER_OF_AXIS 4
  
 /* Global variables */
 char title[] = "3D Shapes";
- 
+
+void initMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
+   for(int i = 0; i < NUMBER_OF_AXIS; i++){
+      for(int j = 0; j < NUMBER_OF_AXIS; j++){
+         matrix[i][j] = 0.0f;
+
+         if(i == j){
+            matrix[i][j] = 1.0f;
+         }
+      }
+   }
+}
+
+void transformMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
+
+   for(int k = 0; k < NUMBER_OF_AXIS; k++){
+
+      for(int i = 0; i < NUMBER_OF_AXIS; i++){
+
+         result[i][k]  = 0.0f;
+
+         for(int j = 0; j < NUMBER_OF_AXIS; j++){
+            result[i][k] += matrixA[j][k] * matrixB[i][j];
+            //result[i][k] += 1;
+         }
+      }
+   }
+   
+}
 /* Initialize OpenGL Graphics */
 void initGL() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
@@ -41,18 +69,26 @@ void display() {
       GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
       GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+      GLfloat  TranslationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+      GLfloat  TranslationMatrixToOrigin[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+      GLfloat  ScalingMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+
+      initMatrix(TransformationMatrix);
+      initMatrix(TranslationMatrix);
+      initMatrix(TranslationMatrixToOrigin);
+      initMatrix(ScalingMatrix);
 
       //Se inicializa la matriz de transformación
-      for(int i = 0; i < NUMBER_OF_AXIS; i++){
+     /* for(int i = 0; i < NUMBER_OF_AXIS; i++){
          for(int j = 0; j < NUMBER_OF_AXIS; j++){
             TransformationMatrix[i][j] = 0.0f;
          }
       }
-
+*/
       //Se asignan los valores de escalación
-      TransformationMatrix[0][0] = -1;
-      TransformationMatrix[1][1] = 1.5;
-      TransformationMatrix[2][2] = 0.5;
+      ScalingMatrix[0][0] = -1;
+      ScalingMatrix[1][1] = 1.0;
+      ScalingMatrix[2][2] = 1.0;
 
       //Se agregan los valores de traslación de la matriz
 
@@ -60,9 +96,9 @@ void display() {
       //TransformationMatrix[0][0] = TransformationMatrix[1][1] = TransformationMatrix[2][2]  = 0.5f;
 
       //Se agregan los valores de traslación de la matriz
-      TransformationMatrix[0][3] = 0;
-      TransformationMatrix[1][3] = 0;
-      TransformationMatrix[2][3] = 0;
+      TranslationMatrix[0][3] = 0;
+      TranslationMatrix[1][3] = 0;
+      TranslationMatrix[2][3] = 0;
 
       v[0][0] = -1.0f;
       v[1][0] = 3.0f;
@@ -133,7 +169,7 @@ void display() {
       v[1][13] = 1.0f;
       v[2][13] = 1.0f;
       v[3][13] = 1.0f;
-
+/*
       //High Ceiling
       v[0][14] = 1.2f;
       v[1][14] = 2.2f;
@@ -174,9 +210,19 @@ void display() {
       v[1][21] = -2.6f;
       v[2][21] = -1.2f;
       v[3][21] = 1.0f;
+*/
+
 
       GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
+      TranslationMatrixToOrigin[0][3] =  -v[0][0];
+      TranslationMatrixToOrigin[1][3] =  -v[1][0];
+      TranslationMatrixToOrigin[2][3] =  -v[2][0];
+
+
+      transformMatrix(ScalingMatrix, TranslationMatrixToOrigin, ResultMatrix);
+      transformMatrix(TranslationMatrix, ResultMatrix, TransformationMatrix);
+      
       //Se realiza la multiplicación de matrices TransformationMatrix * v 
       for(int k = 0; k < NUMBER_OF_VECTORS; k++){
          for(int i = 0; i < NUMBER_OF_AXIS;  i++){
@@ -186,6 +232,8 @@ void display() {
             }
          }
       }
+
+      
 
       glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
       //Top face 
@@ -286,6 +334,7 @@ void display() {
       glVertex3f( ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
    glEnd();  // End of drawing color-cube
    
+   /*
    //Roof
    glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
       //Top face 
@@ -335,7 +384,7 @@ void display() {
       glVertex3f( ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
       glVertex3f( ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
    glEnd();  // End of drawing color-cube
-
+*/
    
  /*  // Render a pyramid consists of 4 triangles
    glLoadIdentity();                  // Reset the model-view matrix
