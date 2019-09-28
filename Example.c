@@ -1,6 +1,13 @@
 /*
  * OGL01Shape3D.cpp: 3D Shapes
  */
+
+/*
+
+To compile from console in mac:
+gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
+
+*/
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -8,8 +15,12 @@
 #include <windows.h>
 #endif
 
+#include <math.h>
+
 #define NUMBER_OF_VECTORS 14
 #define NUMBER_OF_AXIS 4
+
+#define PI 3.14159265
  
 /* Global variables */
 char title[] = "3D Shapes";
@@ -26,7 +37,18 @@ void initMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
    }
 }
 
-void transformMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
+void transformMatrix(GLfloat transformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat vectors[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]){
+    for(int k = 0; k < NUMBER_OF_VECTORS; k++){
+         for(int i = 0; i < NUMBER_OF_AXIS;  i++){
+             result[i][k] = 0.0f;
+            for(int j = 0; j  < NUMBER_OF_AXIS; j++){
+               result[i][k] +=  vectors[j][k] * transformationMatrix[i][j];
+            }
+         }
+      }
+}
+
+void multMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
 
    for(int k = 0; k < NUMBER_OF_AXIS; k++){
 
@@ -41,6 +63,50 @@ void transformMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat ma
       }
    }
    
+}
+
+void rotateMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], double angleX, double angleY, double angleZ){
+   
+   GLfloat RotationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat matrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+
+   double  angleRadX = angleX * (PI / 180); //Converting degrees into radians
+
+   //Rotating in X axis
+
+   initMatrix(RotationMatrix);
+
+   RotationMatrix[1][1] = cos(angleRadX);
+   RotationMatrix[1][2] = -sin(angleRadX);
+   RotationMatrix[2][1] = sin(angleRadX);
+   RotationMatrix[2][2] = cos(angleRadX);
+
+   transformMatrix(RotationMatrix, matrix, ResultMatrix);
+
+   //Rotating in Y axis
+   double  angleRadY = angleY * (PI / 180); //Converting degrees into radians
+
+   initMatrix(RotationMatrix);
+
+   RotationMatrix[0][0] = cos(angleRadY);
+   RotationMatrix[0][2] = sin(angleRadY);
+   RotationMatrix[2][0] = -sin(angleRadY);
+   RotationMatrix[2][2] = cos(angleRadY);
+
+   transformMatrix(RotationMatrix, ResultMatrix, matrixAux);
+
+   //Rotating in Z axis
+   double  angleRadZ = angleZ * (PI / 180); //Converting degrees into radians
+
+   initMatrix(RotationMatrix);
+
+   RotationMatrix[0][0] = cos(angleRadZ);
+   RotationMatrix[0][1] = -sin(angleRadZ);
+   RotationMatrix[1][0] = sin(angleRadZ);
+   RotationMatrix[1][1] = cos(angleRadZ);
+
+   transformMatrix(RotationMatrix, matrixAux, ResultMatrix);
+
 }
 /* Initialize OpenGL Graphics */
 void initGL() {
@@ -210,9 +276,9 @@ void display() {
       v[1][21] = -2.6f;
       v[2][21] = -1.2f;
       v[3][21] = 1.0f;
+
+
 */
-
-
       GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
       TranslationMatrixToOrigin[0][3] =  -v[0][0];
@@ -220,19 +286,25 @@ void display() {
       TranslationMatrixToOrigin[2][3] =  -v[2][0];
 
 
-      transformMatrix(ScalingMatrix, TranslationMatrixToOrigin, ResultMatrix);
-      transformMatrix(TranslationMatrix, ResultMatrix, TransformationMatrix);
-      
+      multMatrix(ScalingMatrix, TranslationMatrixToOrigin, ResultMatrix);
+      multMatrix(TranslationMatrix, ResultMatrix, TransformationMatrix);
+
       //Se realiza la multiplicación de matrices TransformationMatrix * v 
-      for(int k = 0; k < NUMBER_OF_VECTORS; k++){
+/*      for(int k = 0; k < NUMBER_OF_VECTORS; k++){
          for(int i = 0; i < NUMBER_OF_AXIS;  i++){
              ResultMatrix[i][k] = 0.0f;
             for(int j = 0; j  < NUMBER_OF_AXIS; j++){
                ResultMatrix[i][k] +=  v[j][k] * TransformationMatrix[i][j];
             }
          }
-      }
+      }*/
+      GLfloat ResultMatrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
+      //Transforms the matrix aplying translation and scaling
+      transformMatrix(TransformationMatrix, v, ResultMatrixAux);
+
+      //Rotates the matrix, parameters in degrees x,y,z
+      rotateMatrix(ResultMatrixAux,ResultMatrix, 0,0,0);
       
 
       glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
@@ -456,6 +528,7 @@ int main(int argc, char** argv) {
    glutDisplayFunc(display);       // Register callback handler for window re-paint event
    glutReshapeFunc(reshape);       // Register callback handler for window re-size event
    initGL();                       // Our own OpenGL initialization
-   glutMainLoop();                 // Enter the infinite event-processing loop
+   glutMainLoop();                 // Enter the infinite event-processing 
+
    return 0;
 }
