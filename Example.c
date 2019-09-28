@@ -9,7 +9,7 @@
 #endif
 
 #define NUMBER_OF_VECTORS 8
-#define NUMBER_OF_AXIS 3
+#define NUMBER_OF_AXIS 4
  
 /* Global variables */
 char title[] = "3D Shapes";
@@ -34,7 +34,7 @@ void display() {
    glLoadIdentity();                 // Reset the model-view matrix
    glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
  
-   glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+   
       // Top face (y = 1.0f)
       // Define vertices in counter-clockwise (CCW) order with normal pointing out
 
@@ -42,48 +42,69 @@ void display() {
 
       GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
 
+      //Se inicializa la matriz de transformación
       for(int i = 0; i < NUMBER_OF_AXIS; i++){
          for(int j = 0; j < NUMBER_OF_AXIS; j++){
             TransformationMatrix[i][j] = 0.0f;
          }
       }
 
+      //Se asignan los valores de escalación
+      TransformationMatrix[0][0] = 1;
+      TransformationMatrix[1][1] = 1.5;
+      TransformationMatrix[2][2] = 0.5;
+
+      //Se agregan los valores de traslación de la matriz
+
       //Se asigna los valores para escalar la matriz
-      TransformationMatrix[0][0] = TransformationMatrix[1][1] = TransformationMatrix[2][2]  = 0.5f;
+      //TransformationMatrix[0][0] = TransformationMatrix[1][1] = TransformationMatrix[2][2]  = 0.5f;
+
+      //Se agregan los valores de traslación de la matriz
+      TransformationMatrix[0][3] = 0;
+      TransformationMatrix[1][3] = 0;
+      TransformationMatrix[2][3] = 0;
 
       v[0][0] = -1.0f;
-      v[1][0] = 1.0f;
+      v[1][0] = 3.0f;
       v[2][0] = 1.0f;     
+      v[3][0] = 1.0f;     
 
       v[0][1] = 1.0f;
-      v[1][1] = 1.0f;
+      v[1][1] = 3.0f;
       v[2][1] = 1.0f;
+      v[3][1] = 1.0f;
 
       v[0][2] = 1.0f;
       v[1][2] = -1.0f;
       v[2][2] = 1.0f;
+      v[3][2] = 1.0f;
 
       v[0][3] = -1.0f;
       v[1][3] = -1.0f;
       v[2][3] = 1.0f;
+      v[3][3] = 1.0f;
 
       v[0][4] = -1.0f;
-      v[1][4] = 1.0f;
+      v[1][4] = 3.0f;
       v[2][4] = -1.0f;
+      v[3][4] = 1.0f;
 
       v[0][5] = 1.0f;
-      v[1][5] = 1.0f;
+      v[1][5] = 3.0f;
       v[2][5] = -1.0f;
+      v[3][5] = 1.0f;
 
       v[0][6] = 1.0f;
       v[1][6] = -1.0f;
       v[2][6] = -1.0f;
+      v[3][6] = 1.0f;
 
       v[0][7] = -1.0f;
       v[1][7] = -1.0f;
       v[2][7] = -1.0f;
+      v[3][7] = 1.0f;
 
-      GLfloat ResultMatrix[3][8];
+      GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
       //Se realiza la multiplicación de matrices TransformationMatrix * v 
       for(int k = 0; k < NUMBER_OF_VECTORS; k++){
@@ -95,33 +116,34 @@ void display() {
          }
       }
 
-      //Top face y = 1.0f
-      //glColor3f(0.0f, 1.0f, 0.0f);     // Green
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+      //Top face 
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
       glVertex3f( ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
       glVertex3f( ResultMatrix[0][4], ResultMatrix[1][4], ResultMatrix[2][4]);
       glVertex3f( ResultMatrix[0][0], ResultMatrix[1][0], ResultMatrix[2][0]);
       glVertex3f( ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
  
-      // Bottom face (y = -1.0f)
-      //glColor3f(1.0f, 0.5f, 0.0f);     // Orange
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      // Bottom face 
+      glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
       glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
       glVertex3f( ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
       glVertex3f( ResultMatrix[0][7], ResultMatrix[1][7], ResultMatrix[2][7]);
       glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
  
       // Front face  (z = 1.0f)
-      //glColor3f(1.0f, 0.0f, 0.0f);     // Red
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
       glVertex3f( ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
       glVertex3f( ResultMatrix[0][0], ResultMatrix[1][0], ResultMatrix[2][0]);
       glVertex3f( ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
       glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
  
       // Back face (z = -1.0f)
-      //glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
       glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
       glVertex3f( ResultMatrix[0][7], ResultMatrix[1][7], ResultMatrix[2][7]);
       glVertex3f( ResultMatrix[0][4], ResultMatrix[1][4], ResultMatrix[2][4]);
@@ -135,15 +157,15 @@ void display() {
       glVertex3f( ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
  
       // Right face (x = 1.0f)
-      //glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
       glVertex3f( ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
       glVertex3f( ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
       glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
       glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
    glEnd();  // End of drawing color-cube
  
-   // Render a pyramid consists of 4 triangles
+ /*  // Render a pyramid consists of 4 triangles
    glLoadIdentity();                  // Reset the model-view matrix
    glTranslatef(-1.5f, 0.0f, -6.0f);  // Move left and into the screen
  
@@ -179,7 +201,7 @@ void display() {
       glVertex3f(-1.0f,-1.0f,-1.0f);
       glColor3f(0.0f,1.0f,0.0f);       // Green
       glVertex3f(-1.0f,-1.0f, 1.0f);
-   glEnd();   // Done drawing the pyramid
+   glEnd();   // Done drawing the pyramid*/
  
    glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
@@ -199,13 +221,14 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
    glLoadIdentity();             // Reset
    // Enable perspective projection with fovy, aspect, zNear and zFar
    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+   glTranslatef(0.0f, 0.0f, -10.0f);
 }
  
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
    glutInit(&argc, argv);            // Initialize GLUT
    glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
-   glutInitWindowSize(640, 480);   // Set the window's initial width & height
+   glutInitWindowSize(1000, 1000);   // Set the window's initial width & height
    glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
    glutCreateWindow(title);          // Create window with the given title
    glutDisplayFunc(display);       // Register callback handler for window re-paint event
