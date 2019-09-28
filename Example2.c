@@ -17,7 +17,7 @@ gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framew
 
 #include <math.h>
 
-#define NUMBER_OF_VECTORS 14
+#define NUMBER_OF_VECTORS 24
 #define NUMBER_OF_AXIS 4
 
 #define PI 3.14159265
