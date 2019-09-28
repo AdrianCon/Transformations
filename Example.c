@@ -8,7 +8,7 @@
 #include <windows.h>
 #endif
 
-#define NUMBER_OF_VECTORS 8
+#define NUMBER_OF_VECTORS 22
 #define NUMBER_OF_AXIS 4
  
 /* Global variables */
@@ -50,7 +50,7 @@ void display() {
       }
 
       //Se asignan los valores de escalación
-      TransformationMatrix[0][0] = 1;
+      TransformationMatrix[0][0] = -1;
       TransformationMatrix[1][1] = 1.5;
       TransformationMatrix[2][2] = 0.5;
 
@@ -103,6 +103,77 @@ void display() {
       v[1][7] = -1.0f;
       v[2][7] = -1.0f;
       v[3][7] = 1.0f;
+
+      v[0][8] = 1.3f;
+      v[1][8] = -1.0f;
+      v[2][8] = 1.0f;
+      v[3][8] = 1.0f;
+
+      v[0][9] = 1.3f;
+      v[1][9] = -1.0f;
+      v[2][9] = -1.0f;
+      v[3][9] = 1.0f;
+
+      v[0][10] = 1.3f;
+      v[1][10] = 1.0f;
+      v[2][10] = -1.0f;
+      v[3][10] = 1.0f;
+
+      v[0][11] = 1.3f;
+      v[1][11] = 1.0f;
+      v[2][11] = 1.0f;
+      v[3][11] = 1.0f;
+
+      v[0][12] = 1.0f;
+      v[1][12] = 1.0f;
+      v[2][12] = -1.0f;
+      v[3][12] = 1.0f;
+
+      v[0][13] = 1.0f;
+      v[1][13] = 1.0f;
+      v[2][13] = 1.0f;
+      v[3][13] = 1.0f;
+
+      //High Ceiling
+      v[0][14] = 1.2f;
+      v[1][14] = 2.2f;
+      v[2][14] = 1.2f;     
+      v[3][14] = 1.0f;     
+
+      v[0][15] = -1.2f;
+      v[1][15] = 2.2f;
+      v[2][15] = 1.2f;
+      v[3][15] = 1.0f;
+
+      v[0][16] = 1.2f;
+      v[1][16] = 2.2f;
+      v[2][16] = 1.2f;
+      v[3][16] = 1.0f;
+
+      v[0][17] = -1.2f;
+      v[1][17] = 2.6f;
+      v[2][17] = 1.2f;
+      v[3][17] = 1.0f;
+
+      v[0][18] = -1.0f;
+      v[1][18] = 2.2f;
+      v[2][18] = -1.2f;
+      v[3][18] = 1.0f;
+
+      v[0][19] = 1.0f;
+      v[1][19] = 2.2f;
+      v[2][19] = -1.2f;
+      v[3][19] = 1.0f;
+
+      v[0][20] = 1.0f;
+      v[1][20] = 2.6f;
+      v[2][20] = -1.2f;
+      v[3][20] = 1.0f;
+
+      v[0][21] = -1.0f;
+      v[1][21] = -2.6f;
+      v[2][21] = -1.2f;
+      v[3][21] = 1.0f;
 
       GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
@@ -164,7 +235,108 @@ void display() {
       glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
       glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
    glEnd();  // End of drawing color-cube
+
+   //Lobby Entrance
+    glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+      //Top face 
+      //glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+      glVertex3f( ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+      glVertex3f( ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+      glVertex3f( ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
  
+      // Bottom face 
+      //glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
+      glVertex3f( ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
+      glVertex3f( ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+      glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
+ 
+      // Front face  (z = 1.0f)
+      //glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+      glVertex3f( ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
+      glVertex3f( ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+      glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
+ 
+      // Back face (z = -1.0f)
+      //glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
+      glVertex3f( ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+      glVertex3f( ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+      glVertex3f( ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+ 
+      // Left face (x = -1.0f)
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
+      glVertex3f( ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
+      glVertex3f( ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+      glVertex3f( ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+ 
+      // Right face (x = 1.0f)
+      glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
+      glVertex3f( ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+      glVertex3f( ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+      glVertex3f( ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+   glEnd();  // End of drawing color-cube
+   
+   //Roof
+   glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+      //Top face 
+      //glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+      glVertex3f( ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+      glVertex3f( ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+      glVertex3f( ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+ 
+      // Bottom face 
+      //glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+      glVertex3f( ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+      glVertex3f( ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+      glVertex3f( ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+ 
+      // Front face  (z = 1.0f)
+      //glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+      glVertex3f( ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+      glVertex3f( ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+      glVertex3f( ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+ 
+      // Back face (z = -1.0f)
+      //glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+      glVertex3f( ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+      glVertex3f( ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+      glVertex3f( ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+ 
+      // Left face (x = -1.0f)
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+      glVertex3f( ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+      glVertex3f( ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+      glVertex3f( ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+ 
+      // Right face (x = 1.0f)
+      glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+      //glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f( ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+      glVertex3f( ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+      glVertex3f( ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+      glVertex3f( ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+   glEnd();  // End of drawing color-cube
+
+   
  /*  // Render a pyramid consists of 4 triangles
    glLoadIdentity();                  // Reset the model-view matrix
    glTranslatef(-1.5f, 0.0f, -6.0f);  // Move left and into the screen
@@ -222,6 +394,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
    // Enable perspective projection with fovy, aspect, zNear and zFar
    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
    glTranslatef(0.0f, 0.0f, -10.0f);
+   glRotatef(30, 0,1,0);
 }
  
 /* Main function: GLUT runs as a console application starting at main() */
