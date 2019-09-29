@@ -2,71 +2,72 @@
  * OGL01Shape3D.cpp: 3D Shapes
  */
 
-/*
+ /*
+ To compile from console in mac:
+ gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
+ */
 
-To compile from console in mac:
-gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
-
-*/
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
-#include <windows.h>
 #endif
 
+#include <stdlib.h>
 #include <math.h>
+
 
 #define NUMBER_OF_VECTORS 24
 #define NUMBER_OF_AXIS 4
 
 #define PI 3.14159265
- 
-/* Global variables */
+
+
+ /* Global variables */
 char title[] = "3D Shapes";
 
-void initMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
-   for(int i = 0; i < NUMBER_OF_AXIS; i++){
-      for(int j = 0; j < NUMBER_OF_AXIS; j++){
+void initMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS]) {
+   for (int i = 0; i < NUMBER_OF_AXIS; i++) {
+      for (int j = 0; j < NUMBER_OF_AXIS; j++) {
          matrix[i][j] = 0.0f;
 
-         if(i == j){
+         if (i == j) {
             matrix[i][j] = 1.0f;
          }
       }
    }
 }
 
-void transformMatrix(GLfloat transformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat vectors[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]){
-    for(int k = 0; k < NUMBER_OF_VECTORS; k++){
-         for(int i = 0; i < NUMBER_OF_AXIS;  i++){
-             result[i][k] = 0.0f;
-            for(int j = 0; j  < NUMBER_OF_AXIS; j++){
-               result[i][k] +=  vectors[j][k] * transformationMatrix[i][j];
-            }
+void transformMatrix(GLfloat transformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat vectors[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
+   for (int k = 0; k < NUMBER_OF_VECTORS; k++) {
+      for (int i = 0; i < NUMBER_OF_AXIS; i++) {
+         result[i][k] = 0.0f;
+         for (int j = 0; j < NUMBER_OF_AXIS; j++) {
+            result[i][k] += vectors[j][k] * transformationMatrix[i][j];
          }
       }
+   }
 }
 
-void multMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]){
+void multMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]) {
 
-   for(int k = 0; k < NUMBER_OF_AXIS; k++){
+   for (int k = 0; k < NUMBER_OF_AXIS; k++) {
 
-      for(int i = 0; i < NUMBER_OF_AXIS; i++){
+      for (int i = 0; i < NUMBER_OF_AXIS; i++) {
 
-         result[i][k]  = 0.0f;
+         result[i][k] = 0.0f;
 
-         for(int j = 0; j < NUMBER_OF_AXIS; j++){
+         for (int j = 0; j < NUMBER_OF_AXIS; j++) {
             result[i][k] += matrixA[j][k] * matrixB[i][j];
             //result[i][k] += 1;
          }
       }
    }
-   
+
 }
 
-void rotateMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], double angleX, double angleY, double angleZ){
-   
+void rotateMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], double angleX, double angleY, double angleZ) {
+
    GLfloat RotationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
    GLfloat matrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
@@ -117,92 +118,73 @@ void initGL() {
    glShadeModel(GL_SMOOTH);   // Enable smooth shading
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
 }
- 
+
 /* Handler for window-repaint event. Called back when the window first appears and
    whenever the window needs to be re-painted. */
 void display() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
    glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
- 
+
    // Render a color-cube consisting of 6 quads with different colors
    glLoadIdentity();                 // Reset the model-view matrix
    glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
- 
-   
+
+
       // Top face (y = 1.0f)
       // Define vertices in counter-clockwise (CCW) order with normal pointing out
 
-      GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
-      //0      1     2     3     4     5     6     7     8     9     10    11    12    13    14    15    16    17    18    19    20    21    22    23    
+   GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
+   // 0      1     2     3     4     5     6     7     8     9     10    11    12    13    14    15    16    17    18    19    20    21    22    23    
       {0.0, 2.0,  2.0,  0.0,  0.0,  2.0,  2.0,  0.0,  2.5,  2.5,  2.0,  2.5,  2.5,  2.0,  2.0,  2.0,  -0.2, 2.2,  2.2,  -0.2, -0.2, 2.2,  2.2,  -0.2},
       {0.0, 0.0,  0.0,  0.0,  5.0,  5.0,  5.0,  5.0,  0.0,  0.0,  2.0,  2.0,  2.0,  2.0,  3.0,  3.0,  4.5,  4.5,  4.5,  4.5,  4.7,  4.7,  4.7,  4.7},
       {0.0, 0.0,  -2.0, -2.0, 0.0,  0.0,  -2.0, -2.0, 0.0,  -2.0, 0.0,  0.0,  -2.0, -2.0, 0.0,  -2.0, 0.2,  0.2,  -2.2, -2.2, 0.2,  0.2,  -2.2, -2.2},
       {1.0, 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0}
    };
 
-      GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
-      GLfloat  TranslationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
-      GLfloat  TranslationMatrixToOrigin[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
-      GLfloat  ScalingMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat  TranslationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat  TranslationMatrixToOrigin[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat  ScalingMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+   GLfloat ResultMatrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+   GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
-      initMatrix(TransformationMatrix);
-      initMatrix(TranslationMatrix);
-      initMatrix(TranslationMatrixToOrigin);
-      initMatrix(ScalingMatrix);
+   //Se inicializan las matrices 
+   initMatrix(TransformationMatrix);
+   initMatrix(TranslationMatrix);
+   initMatrix(TranslationMatrixToOrigin);
+   initMatrix(ScalingMatrix);
 
-      //Se inicializa la matriz de transformación
-     /* for(int i = 0; i < NUMBER_OF_AXIS; i++){
-         for(int j = 0; j < NUMBER_OF_AXIS; j++){
-            TransformationMatrix[i][j] = 0.0f;
-         }
-      }
-*/
-      //Se asignan los valores de escalación
-      ScalingMatrix[0][0] = -1;
-      ScalingMatrix[1][1] = 1.0;
-      ScalingMatrix[2][2] = 1.0;
+   //Se asignan los valores de escalación
+   ScalingMatrix[0][0] = -1;  //X
+   ScalingMatrix[1][1] = -1;  //Y
+   ScalingMatrix[2][2] = -1;  //Z
 
-      //Se agregan los valores de traslación de la matriz
+   //Se agregan los valores de traslación de la matriz
+   TranslationMatrix[0][3] = 0;  //X
+   TranslationMatrix[1][3] = 0;  //Y
+   TranslationMatrix[2][3] = 0;  //Z
 
-      //Se asigna los valores para escalar la matriz
-      //TransformationMatrix[0][0] = TransformationMatrix[1][1] = TransformationMatrix[2][2]  = 0.5f;
+   //Se calcula la translación al origen
+   TranslationMatrixToOrigin[0][3] = -v[0][0];
+   TranslationMatrixToOrigin[1][3] = -v[1][0];
+   TranslationMatrixToOrigin[2][3] = -v[2][0];
 
-      //Se agregan los valores de traslación de la matriz
-      TranslationMatrix[0][3] = 0;
-      TranslationMatrix[1][3] = 0;
-      TranslationMatrix[2][3] = 0;
+   GLfloat TranslationAux[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
 
+   multMatrix(ScalingMatrix, TranslationMatrixToOrigin, TranslationAux);
+   multMatrix(TranslationMatrix, TranslationAux, TransformationMatrix);
 
-      GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+   //Se realiza la multiplicación de matrices TransformationMatrix * v 
 
-      TranslationMatrixToOrigin[0][3] =  -v[0][0];
-      TranslationMatrixToOrigin[1][3] =  -v[1][0];
-      TranslationMatrixToOrigin[2][3] =  -v[2][0];
+   //Transforms the matrix aplying translation and scaling
+   transformMatrix(TransformationMatrix, v, ResultMatrixAux);
 
-
-      multMatrix(ScalingMatrix, TranslationMatrixToOrigin, ResultMatrix);
-      multMatrix(TranslationMatrix, ResultMatrix, TransformationMatrix);
-
-      //Se realiza la multiplicación de matrices TransformationMatrix * v 
-/*      for(int k = 0; k < NUMBER_OF_VECTORS; k++){
-         for(int i = 0; i < NUMBER_OF_AXIS;  i++){
-             ResultMatrix[i][k] = 0.0f;
-            for(int j = 0; j  < NUMBER_OF_AXIS; j++){
-               ResultMatrix[i][k] +=  v[j][k] * TransformationMatrix[i][j];
-            }
-         }
-      }*/
-      GLfloat ResultMatrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
-
-      //Transforms the matrix aplying translation and scaling
-      transformMatrix(TransformationMatrix, v, ResultMatrixAux);
-
-      //Rotates the matrix, parameters in degrees x,y,z
-      rotateMatrix(ResultMatrixAux,ResultMatrix, 0,0,0);
-      
+   //Rotates the matrix, parameters in degrees x,y,z
+   rotateMatrix(ResultMatrixAux, ResultMatrix, 170, 20, 30);
 
 
-   glBegin(GL_QUADS);                
+
+   glBegin(GL_QUADS);
    //#############
    //MAIN BUILDING
    //#############
@@ -370,7 +352,7 @@ void display() {
    glColor3f(1.0f, 1.0f, 0.0f);
    glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
    glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-   glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+   glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
    // Left face (x = -1.0f)
    glColor3f(1.0f, 1.0f, 0.0f);
@@ -380,29 +362,29 @@ void display() {
    glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
    glEnd();  // End of LOBBY ROOF
- 
+
    glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
- 
+
 /* Handler for window re-size event. Called back when the window first appears and
    whenever the window is re-sized with its new width and height */
 void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
    // Compute aspect ratio of the new window
    if (height == 0) height = 1;                // To prevent divide by 0
    GLfloat aspect = (GLfloat)width / (GLfloat)height;
- 
+
    // Set the viewport to cover the new window
    glViewport(0, 0, width, height);
- 
+
    // Set the aspect ratio of the clipping volume to match the viewport
    glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
    glLoadIdentity();             // Reset
    // Enable perspective projection with fovy, aspect, zNear and zFar
    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
    glTranslatef(0.0f, 0.0f, -10.0f);
-   glRotatef(30, 0,1,0);
+   glRotatef(10, 0, 1, 0);
 }
- 
+
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
    glutInit(&argc, argv);            // Initialize GLUT
