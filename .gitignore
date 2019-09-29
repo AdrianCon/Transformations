@@ -1,1 +1,5 @@
 *.o
+*.exe
+*.png
+*.jpeg
+*.jpg
