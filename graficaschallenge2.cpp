@@ -10,6 +10,9 @@ Code is based from the following original source:
 3D Graphics with OpenGL
 https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html
 
+Original source for key events:
+http://www.swiftless.com/tutorials/opengl/keyboard.html
+
 To compile from console in mac:
 gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
 */
