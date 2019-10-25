@@ -28,13 +28,17 @@ gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framew
 #define NUMBER_OF_VECTORS 24 //Number of vertex in our model
 #define NUMBER_OF_AXIS 4 //Dimension(3D) + 1
 
+#define ROTATION_VEL 10
+#define TRANSLATION_VEL 1
+#define SCALE_VEL 0.1
+
 #define PI 3.14159265
 
  /* Global variables */
 char title[] = "3D Shapes";
 
 GLfloat translateModel[3] = {0,0,0};
-GLfloat rotateModel[3] = {0,0,0};
+double rotateModel[3] = {0,0,0};
 GLfloat scaleModel[3] = {0,0,0};
 
 bool ctrlKeyPressed = false;
@@ -348,9 +352,9 @@ void display() {
 
 
 	//Scaling factors for the transformation matrix
-	ScalingMatrix[0][0] = -1;   //SCALE ON X
-	ScalingMatrix[1][1] = -1;	//SCALE ON Y
-	ScalingMatrix[2][2] = -1;	//SCALE ON Z
+	ScalingMatrix[0][0] = -1 + scaleModel[0];   //SCALE ON X
+	ScalingMatrix[1][1] = -1 + scaleModel[1];	//SCALE ON Y
+	ScalingMatrix[2][2] = -1 + scaleModel[2];	//SCALE ON Z
 
 	//Values are added to the transf matrix
 
@@ -384,10 +388,9 @@ void display() {
 	transformMatrix(TransformationMatrix, v, ResultMatrixAux);
 
 	//Rotates the matrix, parameters in degrees x,y,z
-	rotateMatrix(ResultMatrixAux, ResultMatrix, 180, 40, 0);
-
-
-	renderFigure(ResultMatrixAux);
+	rotateMatrix(ResultMatrixAux, ResultMatrix, 180 + rotateModel[0], 40 + rotateModel[1], 0 + rotateModel[2]);
+	
+	renderFigure(ResultMatrix);
 	
 	
 }
@@ -412,31 +415,22 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 }
 
 void keySpecial(int key, int x, int  y){
+
 	switch(key){
 		case GLUT_KEY_LEFT:
-			printf("Tecla izquierda\n");
-			
-			translateModel[0] += 1;
-			glutPostRedisplay();
-			display();
+			translateModel[0] += TRANSLATION_VEL;
 			break;
 
 		case GLUT_KEY_RIGHT:
-			printf("Tecla derecha\n");
-			translateModel[0] -= 1;
-			glutPostRedisplay();
+			translateModel[0] -= TRANSLATION_VEL;
 			break;
 
 		case GLUT_KEY_UP:
-			printf("Tecla arriba\n");
-			translateModel[1] -= 1;
-			glutPostRedisplay();
+			translateModel[1] -= TRANSLATION_VEL;
 			break;
 
 		case GLUT_KEY_DOWN:
-			printf("Tecla abajo\n");
-			translateModel[1] += 1;
-			glutPostRedisplay();
+			translateModel[1] += TRANSLATION_VEL;
 			break;
 
 		case  GLUT_ACTIVE_CTRL:
@@ -450,22 +444,55 @@ void keySpecial(int key, int x, int  y){
 			default:
 			printf("%c\n", key);
 	}
+
+	glutPostRedisplay();
 }
 
-void keyDown (unsigned char key, int x, int y) {  
+void keyDown (unsigned char key, int x, int y) { 
+
 	switch(key){
 
-		case  GLUT_ACTIVE_CTRL:
-			printf("CTRL Pressed Normal\n"); // Set the state of the current key to pressed  
+		case 'w':
+			rotateModel[0] += ROTATION_VEL;
 			break;
 
-		case GLUT_ACTIVE_SHIFT:
-			printf("SHIFT Pressed Normal\n"); // Set the state of the current key to pressed  
+		case 's':
+			rotateModel[0] -= ROTATION_VEL;
+			break;
+
+		case 'a':
+			rotateModel[1] += ROTATION_VEL;
+			break;
+
+		case 'd':
+			rotateModel[1] -= ROTATION_VEL;
+			break;
+
+		case 'A':
+			rotateModel[2] += ROTATION_VEL;
+			break;
+
+		case 'D':
+			rotateModel[2] -= ROTATION_VEL;
+			break;
+
+		case '+':
+			scaleModel[0] -= SCALE_VEL;
+			scaleModel[1] -= SCALE_VEL;
+			scaleModel[2] -= SCALE_VEL;
+			break;
+
+		case '-':
+			scaleModel[0] += SCALE_VEL;
+			scaleModel[1] += SCALE_VEL;
+			scaleModel[2] += SCALE_VEL;
 			break;
 
 		default:
-			printf("%c\n", key);
+			printf("DEFAULT\n");	
 	}
+
+	glutPostRedisplay();
 }  
 /*
 void keyUp (unsigned char key, int x, int y) {  
