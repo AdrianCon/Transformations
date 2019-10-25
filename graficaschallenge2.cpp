@@ -37,7 +37,7 @@ GLfloat translateModel[3] = {0,0,0};
 GLfloat rotateModel[3] = {0,0,0};
 GLfloat scaleModel[3] = {0,0,0};
 
-bool keyStates[256] = {false};
+bool ctrlKeyPressed = false;
 
 GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
 	//	0      1     2     3     4     5     6     7     8     9     10    11    12    13    14    15    16    17    18    19    20    21    22    23    
@@ -415,6 +415,7 @@ void keySpecial(int key, int x, int  y){
 	switch(key){
 		case GLUT_KEY_LEFT:
 			printf("Tecla izquierda\n");
+			
 			translateModel[0] += 1;
 			glutPostRedisplay();
 			display();
@@ -436,17 +437,40 @@ void keySpecial(int key, int x, int  y){
 			printf("Tecla abajo\n");
 			translateModel[1] += 1;
 			glutPostRedisplay();
-			break;	
+			break;
+
+		case  GLUT_ACTIVE_CTRL:
+			printf("CTRL Pressed\n");
+			break;
+
+		case  GLUT_ACTIVE_SHIFT:
+			printf("SHIFT Pressed\n");
+			break;
+
+			default:
+			printf("%c\n", key);
 	}
 }
 
 void keyDown (unsigned char key, int x, int y) {  
-	keyStates[key] = true; // Set the state of the current key to pressed  
-}  
+	switch(key){
 
+		case  GLUT_ACTIVE_CTRL:
+			printf("CTRL Pressed Normal\n"); // Set the state of the current key to pressed  
+			break;
+
+		case GLUT_ACTIVE_SHIFT:
+			printf("SHIFT Pressed Normal\n"); // Set the state of the current key to pressed  
+			break;
+
+		default:
+			printf("%c\n", key);
+	}
+}  
+/*
 void keyUp (unsigned char key, int x, int y) {  
 	keyStates[key] = false; // Set the state of the current key to pressed  
-}
+}*/
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);            // Initialize GLUT
@@ -456,6 +480,7 @@ int main(int argc, char** argv) {
 	glutCreateWindow(title);          // Create window with the given title
 	glutDisplayFunc(display);       // Register callback handler for window re-paint event
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+	glutKeyboardFunc(keyDown);
 	glutSpecialFunc(keySpecial);
 	initGL();                       // Our own OpenGL initialization
 	glutMainLoop();                 // Enter the infinite event-processing 
