@@ -33,9 +33,11 @@ gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framew
  /* Global variables */
 char title[] = "3D Shapes";
 
-GLfloat translationXAxis = 0;
-GLfloat translationYAxis = 0;
-GLfloat translationZAxis = 0;	
+GLfloat translateModel[3] = {0,0,0};
+GLfloat rotateModel[3] = {0,0,0};
+GLfloat scaleModel[3] = {0,0,0};
+
+bool keyStates[256] = {false};
 
 GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
 	//	0      1     2     3     4     5     6     7     8     9     10    11    12    13    14    15    16    17    18    19    20    21    22    23    
@@ -353,9 +355,9 @@ void display() {
 	//Values are added to the transf matrix
 
 	//Translation units for the transformation matrix
-	TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
-	TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
-	TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
+	//TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
+	//TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
+	//TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
 
 
 	GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
@@ -370,12 +372,9 @@ void display() {
 	multMatrix(ScalingMatrix, TranslationMatrixToOrigin, TranslationAux);
 
 	//Translation units for the transformation matrix
-	TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
-	TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
-	TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
-
-	printf("TranslationX: %f\n", translationXAxis);
-	//printf("TranslationX: %f\n", TranslationMatrix[0][3]);
+	TranslationMatrix[0][3] = 0 + translateModel[0];	//TRANSLATION ON X
+	TranslationMatrix[1][3] = 0 + translateModel[1];	//TRANSLATION ON Y
+	TranslationMatrix[2][3] = 0 + translateModel[2];	//TRANSLATION ON Z
 
 	multMatrix(TranslationMatrix, TranslationAux, TransformationMatrix);
 
@@ -416,31 +415,38 @@ void keySpecial(int key, int x, int  y){
 	switch(key){
 		case GLUT_KEY_LEFT:
 			printf("Tecla izquierda\n");
-			translationXAxis += 1;
+			translateModel[0] += 1;
 			glutPostRedisplay();
 			display();
 			break;
 
 		case GLUT_KEY_RIGHT:
 			printf("Tecla derecha\n");
-			translationXAxis -= 1;
+			translateModel[0] -= 1;
 			glutPostRedisplay();
 			break;
 
 		case GLUT_KEY_UP:
 			printf("Tecla arriba\n");
-			translationYAxis -= 1;
+			translateModel[1] -= 1;
 			glutPostRedisplay();
 			break;
 
 		case GLUT_KEY_DOWN:
 			printf("Tecla abajo\n");
-			translationYAxis += 1;
+			translateModel[1] += 1;
 			glutPostRedisplay();
 			break;	
 	}
 }
 
+void keyDown (unsigned char key, int x, int y) {  
+	keyStates[key] = true; // Set the state of the current key to pressed  
+}  
+
+void keyUp (unsigned char key, int x, int y) {  
+	keyStates[key] = false; // Set the state of the current key to pressed  
+}
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);            // Initialize GLUT
