@@ -15,6 +15,13 @@ http://www.swiftless.com/tutorials/opengl/keyboard.html
 
 To compile from console in mac:
 gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
+
+TRANSLATIOM, SCALING AND ROTATION USING KEYBOARD:
+	-To scale the model use the '+' and '-' keys.
+	-To translate the model use the arrow keys.
+	-To rotate the model in x use 'w' and 's' keys
+	-To rotate the model in y use 'a' and 'd' keys
+	-To rotate the model in z use 'A' and 'D' keys
 */
 
 #include <stdlib.h>
@@ -29,20 +36,20 @@ gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framew
 #include <math.h>
 
 #define NUMBER_OF_VECTORS 24 //Number of vertex in our model
-#define NUMBER_OF_AXIS 4 //Dimension(3D) + 1
+#define NUMBER_OF_AXIS 4 	//Dimension(3D) + 1
 
-#define ROTATION_VEL 10
-#define TRANSLATION_VEL 1
-#define SCALE_VEL 0.1
+#define ROTATION_VEL 10		//Constant that defines the velocity of rotation
+#define TRANSLATION_VEL 1	//Constant that defines the velocity of translation
+#define SCALE_VEL 0.1		//Constant that defines the velocity of scaling
 
-#define PI 3.14159265
+#define PI 3.14159265		//Constant that defines the value of pi
 
  /* Global variables */
 char title[] = "3D Shapes";
 
-GLfloat translateModel[3] = {0,0,0};
-double rotateModel[3] = {0,0,0};
-GLfloat scaleModel[3] = {0,0,0};
+GLfloat translateModel[3] = {0,0,0};	//Matrix that contains the value of the transformations for the translation
+double rotateModel[3] = {0,0,0};		//Matrix that contains the value of the transformations for the rotation
+GLfloat scaleModel[3] = {0,0,0};		//Matrix that contains the value of the transformations for the scaling
 
 bool ctrlKeyPressed = false;
 
@@ -417,22 +424,23 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 	glRotatef(10, 0, 1, 0);
 }
 
+//Function that handles special keys like arrow keys
 void keySpecial(int key, int x, int  y){
 
 	switch(key){
-		case GLUT_KEY_LEFT:
+		case GLUT_KEY_LEFT:		//Tanslate in x to the left
 			translateModel[0] += TRANSLATION_VEL;
 			break;
 
-		case GLUT_KEY_RIGHT:
+		case GLUT_KEY_RIGHT:	//Tanslate in x to the right
 			translateModel[0] -= TRANSLATION_VEL;
 			break;
 
-		case GLUT_KEY_UP:
+		case GLUT_KEY_UP:		//Tanslate in y up
 			translateModel[1] -= TRANSLATION_VEL;
 			break;
 
-		case GLUT_KEY_DOWN:
+		case GLUT_KEY_DOWN:		//Tanslate in y down
 			translateModel[1] += TRANSLATION_VEL;
 			break;
 
@@ -443,58 +451,55 @@ void keySpecial(int key, int x, int  y){
 		case  GLUT_ACTIVE_SHIFT:
 			printf("SHIFT Pressed\n");
 			break;
-
-			default:
-			printf("%c\n", key);
 	}
 
+	//Render the new model with the new transformations applied
 	glutPostRedisplay();
 }
 
+//Function that reads the event of a pressed "normal" key 
 void keyDown (unsigned char key, int x, int y) { 
 
 	switch(key){
 
-		case 'w':
+		case 'w':	//Rotate in x 
 			rotateModel[0] += ROTATION_VEL;
 			break;
 
-		case 's':
+		case 's':	//rotate in x
 			rotateModel[0] -= ROTATION_VEL;
 			break;
 
-		case 'a':
+		case 'a':	//rotate in y
 			rotateModel[1] += ROTATION_VEL;
 			break;
 
-		case 'd':
+		case 'd':	//rotate in y
 			rotateModel[1] -= ROTATION_VEL;
 			break;
 
-		case 'A':
+		case 'A':	//rotate in z
 			rotateModel[2] += ROTATION_VEL;
 			break;
 
-		case 'D':
+		case 'D':	//rotate in z
 			rotateModel[2] -= ROTATION_VEL;
 			break;
 
-		case '+':
+		case '+':	//scale the model to be bigger
 			scaleModel[0] -= SCALE_VEL;
 			scaleModel[1] -= SCALE_VEL;
 			scaleModel[2] -= SCALE_VEL;
 			break;
 
-		case '-':
+		case '-':	//scale the model to be little
 			scaleModel[0] += SCALE_VEL;
 			scaleModel[1] += SCALE_VEL;
 			scaleModel[2] += SCALE_VEL;
 			break;
-
-		default:
-			printf("DEFAULT\n");	
 	}
 
+	//Render the new model with the new transformations applied
 	glutPostRedisplay();
 }  
 /*
@@ -503,6 +508,11 @@ void keyUp (unsigned char key, int x, int y) {
 }*/
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
+
+	printf("To translate use arrow keys\n");
+	printf("To rotate use wasd keys for x and y, for z use AD\n");
+	printf("To scale use +-\n");
+
 	glutInit(&argc, argv);            // Initialize GLUT
 	glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
 	glutInitWindowSize(1000, 1000);   // Set the window's initial width & height
