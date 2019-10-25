@@ -1,6 +1,6 @@
 /*
 Compuer Graphics
-Challenge 2 Transformation
+Challenge 3 User Interface
 Team 8
 Alejandro Miguel A01272385
 Adrian Contreras A01039138
