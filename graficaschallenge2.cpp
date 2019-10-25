@@ -1,15 +1,133 @@
 /*
- * OGL01Shape3D.cpp: 3D Shapes
- */
+Compuer Graphics
+Challenge 2 Transformation
+Team 8
+Alejandro Miguel A01272385
+Adrian Contreras A01039138
+Arturo Rojas  	 A01039185
 
-#include "GL/glut.h"
+Code is based from the following original source:
+3D Graphics with OpenGL
+https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html
 
-#define NUMBER_OF_VECTORS 24
-#define NUMBER_OF_AXIS 4
+To compile from console in mac:
+gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
+*/
+
+#include <stdlib.h>
+
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include <stdio.h>
+#include <math.h>
+
+#define NUMBER_OF_VECTORS 24 //Number of vertex in our model
+#define NUMBER_OF_AXIS 4 //Dimension(3D) + 1
+
+#define PI 3.14159265
 
  /* Global variables */
 char title[] = "3D Shapes";
 
+GLfloat translationXAxis = 0;
+GLfloat translationYAxis = 0;
+GLfloat translationZAxis = 0;	
+
+GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
+	//	0      1     2     3     4     5     6     7     8     9     10    11    12    13    14    15    16    17    18    19    20    21    22    23    
+		{0.0, 2.0,  2.0,  0.0,  0.0,  2.0,  2.0,  0.0,  2.5,  2.5,  2.0,  2.5,  2.5,  2.0,  2.0,  2.0,  -0.2, 2.2,  2.2,  -0.2, -0.2, 2.2,  2.2,  -0.2},
+		{0.0, 0.0,  0.0,  0.0,  5.0,  5.0,  5.0,  5.0,  0.0,  0.0,  2.0,  2.0,  2.0,  2.0,  3.0,  3.0,  4.5,  4.5,  4.5,  4.5,  4.7,  4.7,  4.7,  4.7},
+		{0.0, 0.0,  -2.0, -2.0, 0.0,  0.0,  -2.0, -2.0, 0.0,  -2.0, 0.0,  0.0,  -2.0, -2.0, 0.0,  -2.0, 0.2,  0.2,  -2.2, -2.2, 0.2,  0.2,  -2.2, -2.2},
+		{1.0, 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0}
+	};
+
+GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+GLfloat  TranslationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+GLfloat  TranslationMatrixToOrigin[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+GLfloat  ScalingMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+
+//Initial transformation matrix with default values
+void initMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS]) {
+	for (int i = 0; i < NUMBER_OF_AXIS; i++) {
+		for (int j = 0; j < NUMBER_OF_AXIS; j++) {
+			matrix[i][j] = 0.0f;
+
+			if (i == j) {
+				matrix[i][j] = 1.0f;
+			}
+		}
+	}
+}
+
+void transformMatrix(GLfloat transformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat vectors[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
+	for (int k = 0; k < NUMBER_OF_VECTORS; k++) {
+		for (int i = 0; i < NUMBER_OF_AXIS; i++) {
+			result[i][k] = 0.0f;
+			for (int j = 0; j < NUMBER_OF_AXIS; j++) {
+				result[i][k] += vectors[j][k] * transformationMatrix[i][j];
+			}
+		}
+	}
+}
+
+void multMatrix(GLfloat matrixA[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat matrixB[NUMBER_OF_AXIS][NUMBER_OF_AXIS], GLfloat result[NUMBER_OF_AXIS][NUMBER_OF_AXIS]) {
+	for (int k = 0; k < NUMBER_OF_AXIS; k++) {
+		for (int i = 0; i < NUMBER_OF_AXIS; i++) {
+			result[i][k] = 0.0f;
+			for (int j = 0; j < NUMBER_OF_AXIS; j++) {
+				result[i][k] += matrixA[j][k] * matrixB[i][j];
+			}
+		}
+	}
+}
+
+void rotateMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], double angleX, double angleY, double angleZ) {
+
+	GLfloat RotationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+	GLfloat matrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+
+	double  angleRadX = angleX * (PI / 180); //Converting degrees into radians
+
+	//Rotating in X axis
+
+	initMatrix(RotationMatrix);
+
+	RotationMatrix[1][1] = cos(angleRadX);
+	RotationMatrix[1][2] = -sin(angleRadX);
+	RotationMatrix[2][1] = sin(angleRadX);
+	RotationMatrix[2][2] = cos(angleRadX);
+
+	transformMatrix(RotationMatrix, matrix, ResultMatrix);
+
+	//Rotating in Y axis
+	double  angleRadY = angleY * (PI / 180); //Converting degrees into radians
+
+	initMatrix(RotationMatrix);
+
+	RotationMatrix[0][0] = cos(angleRadY);
+	RotationMatrix[0][2] = sin(angleRadY);
+	RotationMatrix[2][0] = -sin(angleRadY);
+	RotationMatrix[2][2] = cos(angleRadY);
+
+	transformMatrix(RotationMatrix, ResultMatrix, matrixAux);
+
+	//Rotating in Z axis
+	double  angleRadZ = angleZ * (PI / 180); //Converting degrees into radians
+
+	initMatrix(RotationMatrix);
+
+	RotationMatrix[0][0] = cos(angleRadZ);
+	RotationMatrix[0][1] = -sin(angleRadZ);
+	RotationMatrix[1][0] = sin(angleRadZ);
+	RotationMatrix[1][1] = cos(angleRadZ);
+
+	transformMatrix(RotationMatrix, matrixAux, ResultMatrix);
+
+}
 /* Initialize OpenGL Graphics */
 void initGL() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
@@ -20,68 +138,9 @@ void initGL() {
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
 }
 
-/* Handler for window-repaint event. Called back when the window first appears and
-   whenever the window needs to be re-painted. */
-void display() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
-	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]){
 
-	// Render a color-cube consisting of 6 quads with different colors
-	glLoadIdentity();                 // Reset the model-view matrix
-	glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
-
-
-	   // Top face (y = 1.0f)
-	   // Define vertices in counter-clockwise (CCW) order with normal pointing out
-
-	GLfloat v[NUMBER_OF_AXIS][NUMBER_OF_VECTORS] = {
-		//0		1		2		3		4		5		6		7		8		9		10		11		12		13		14		15		16		17		18		19		20		21		22		23		
-		{0.0,	2.0,	2.0,	0.0,	0.0,	2.0,	2.0,	0.0,	2.5,	2.5,	2.0,	2.5,	2.5,	2.0,	2.0,	2.0,	-0.2,	2.2,	2.2,	-0.2,	-0.2,	2.2,	2.2,	-0.2},
-		{0.0,	0.0,	0.0,	0.0,	5.0,	5.0,	5.0,	5.0,	0.0,	0.0,	2.0,	2.0,	2.0,	2.0,	3.0,	3.0,	4.5,	4.5,	4.5,	4.5,	4.7,	4.7,	4.7,	4.7},
-		{0.0,	0.0,	-2.0,	-2.0,	0.0,	0.0,	-2.0,	-2.0,	0.0,	-2.0,	0.0,	0.0,	-2.0,	-2.0,	0.0,	-2.0,	0.2,	0.2,	-2.2,	-2.2,	0.2,	0.2,	-2.2,	-2.2},
-		{1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0}
-	};
-
-	GLfloat  TransformationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
-
-	//Se inicializa la matriz de transformación
-	for (int i = 0; i < NUMBER_OF_AXIS; i++) {
-		for (int j = 0; j < NUMBER_OF_AXIS; j++) {
-			TransformationMatrix[i][j] = 0.0f;
-		}
-	}
-
-	//Se asignan los valores de escalación
-	TransformationMatrix[0][0] = -1;
-	TransformationMatrix[1][1] = 1.5;
-	TransformationMatrix[2][2] = 0.5;
-
-	//Se agregan los valores de traslación de la matriz
-
-	//Se asigna los valores para escalar la matriz
-	//TransformationMatrix[0][0] = TransformationMatrix[1][1] = TransformationMatrix[2][2]  = 0.5f;
-
-	//Se agregan los valores de traslación de la matriz
-	TransformationMatrix[0][3] = 0;
-	TransformationMatrix[1][3] = 0;
-	TransformationMatrix[2][3] = 0;
-
-
-
-
-	GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
-
-	//Se realiza la multiplicación0 de matrices TransformationMatrix * v 
-	for (int k = 0; k < NUMBER_OF_VECTORS; k++) {
-		for (int i = 0; i < NUMBER_OF_AXIS; i++) {
-			ResultMatrix[i][k] = 0.0f;
-			for (int j = 0; j < NUMBER_OF_AXIS; j++) {
-				ResultMatrix[i][k] += v[j][k] * TransformationMatrix[i][j];
-			}
-		}
-	}
-
-	glBegin(GL_QUADS);                
+	glBegin(GL_QUADS);
 	//#############
 	//MAIN BUILDING
 	//#############
@@ -130,7 +189,7 @@ void display() {
 	//####################
 	//LOBBY ENTRANCE
 	//####################
-	glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+	glBegin(GL_QUADS);                
 	//Top face 
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
@@ -145,28 +204,28 @@ void display() {
 	glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
 	glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 
-	// Front face  (z = 1.0f)
+	// Front face 
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
 	glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
 	glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
 	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 
-	// Back face (z = -1.0f)
+	// Back face
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 	glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
 	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
 	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 
-	// Left face (x = -1.0f)
+	// Left face 
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
 	glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 
-	// Right face (x = 1.0f)
+	// Right face 
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
 	glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
@@ -177,7 +236,7 @@ void display() {
 	//############
 	//TERRACE
 	//############
-	glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+	glBegin(GL_QUADS);                
 	//Top face 
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
@@ -192,28 +251,28 @@ void display() {
 	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
 	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
 
-	// Front face  (z = 1.0f)
+	// Front face 
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
 	glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
 	glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
 	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
 
-	// Back face (z = -1.0f)
+	// Back face
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
 	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
 	glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
 	glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
 
-	// Left face (x = -1.0f)
+	// Left face
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
 	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
 	glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
 	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
 
-	// Right face (x = 1.0f)
+	// Right face
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
 	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
@@ -224,7 +283,7 @@ void display() {
 	//##########
 	//LOBBY ROOF
 	//##########
-	glBegin(GL_QUADS);                // Begin drawing
+	glBegin(GL_QUADS);              
 	   //Top face
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
@@ -239,19 +298,19 @@ void display() {
 	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
 	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 
-	// Front face  (z = 1.0f)
+	// Front face 
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 	glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
 	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
-	// Back face (z = -1.0f)
+	// Back face 
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
-	// Left face (x = -1.0f)
+	// Left face
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
@@ -261,6 +320,77 @@ void display() {
 	glEnd();  // End of LOBBY ROOF
 
 	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
+}
+/* Handler for window-repaint event. Called back when the window first appears and
+   whenever the window needs to be re-painted. */
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+	// Render a color-cube consisting of 6 quads with different colors
+	glLoadIdentity();                 // Reset the model-view matrix
+	glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
+
+
+	   // Top face (y = 1.0f)
+	   // Define vertices in counter-clockwise (CCW) order with normal pointing out
+
+	//Vector matrix representing the vertexes of the polygons, defined in counter-clockwise position. 
+	
+
+	//Initializing matrix
+	initMatrix(TransformationMatrix);
+	initMatrix(TranslationMatrix);
+	initMatrix(TranslationMatrixToOrigin);
+	initMatrix(ScalingMatrix);
+
+
+	//Scaling factors for the transformation matrix
+	ScalingMatrix[0][0] = -1;   //SCALE ON X
+	ScalingMatrix[1][1] = -1;	//SCALE ON Y
+	ScalingMatrix[2][2] = -1;	//SCALE ON Z
+
+	//Values are added to the transf matrix
+
+	//Translation units for the transformation matrix
+	TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
+	TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
+	TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
+
+
+	GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+
+	//Translation to origin is made before scaling is applied
+	TranslationMatrixToOrigin[0][3] = -v[0][0];
+	TranslationMatrixToOrigin[1][3] = -v[1][0];
+	TranslationMatrixToOrigin[2][3] = -v[2][0];
+
+	GLfloat TranslationAux[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
+
+	multMatrix(ScalingMatrix, TranslationMatrixToOrigin, TranslationAux);
+
+	//Translation units for the transformation matrix
+	TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
+	TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
+	TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
+
+	printf("TranslationX: %f\n", translationXAxis);
+	//printf("TranslationX: %f\n", TranslationMatrix[0][3]);
+
+	multMatrix(TranslationMatrix, TranslationAux, TransformationMatrix);
+
+	GLfloat ResultMatrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
+
+	//Transforms the matrix aplying translation and scaling
+	transformMatrix(TransformationMatrix, v, ResultMatrixAux);
+
+	//Rotates the matrix, parameters in degrees x,y,z
+	rotateMatrix(ResultMatrixAux, ResultMatrix, 180, 40, 0);
+
+
+	renderFigure(ResultMatrixAux);
+	
+	
 }
 
 /* Handler for window re-size event. Called back when the window first appears and
@@ -277,9 +407,38 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 	glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
 	glLoadIdentity();             // Reset
 	// Enable perspective projection with fovy, aspect, zNear and zFar
-	gluPerspective(45.0f, aspect, 0.1f, 10.0f);
-	glTranslatef(0.0f, -3.0f, 20.0f);
-	glRotatef(200, 0, 1, 0);
+	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+	glTranslatef(0.0f, 0.0f, -10.0f);
+	glRotatef(10, 0, 1, 0);
+}
+
+void keySpecial(int key, int x, int  y){
+	switch(key){
+		case GLUT_KEY_LEFT:
+			printf("Tecla izquierda\n");
+			translationXAxis += 1;
+			glutPostRedisplay();
+			display();
+			break;
+
+		case GLUT_KEY_RIGHT:
+			printf("Tecla derecha\n");
+			translationXAxis -= 1;
+			glutPostRedisplay();
+			break;
+
+		case GLUT_KEY_UP:
+			printf("Tecla arriba\n");
+			translationYAxis -= 1;
+			glutPostRedisplay();
+			break;
+
+		case GLUT_KEY_DOWN:
+			printf("Tecla abajo\n");
+			translationYAxis += 1;
+			glutPostRedisplay();
+			break;	
+	}
 }
 
 /* Main function: GLUT runs as a console application starting at main() */
@@ -291,7 +450,9 @@ int main(int argc, char** argv) {
 	glutCreateWindow(title);          // Create window with the given title
 	glutDisplayFunc(display);       // Register callback handler for window re-paint event
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+	glutSpecialFunc(keySpecial);
 	initGL();                       // Our own OpenGL initialization
-	glutMainLoop();                 // Enter the infinite event-processing loop
+	glutMainLoop();                 // Enter the infinite event-processing 
+
 	return 0;
 }
