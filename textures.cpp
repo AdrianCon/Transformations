@@ -10,8 +10,10 @@ Code is based from the following original source:
 https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html
 Original source for key events:
 http://www.swiftless.com/tutorials/opengl/keyboard.html
+Original source for texture reading and mapping:
+-Code provided by Prof. Raul Valente
 To compile from console in mac:
-gcc -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
+g++ -o Example.o Example.c  -L/System/Library/Frameworks -framework GLUT -framework OpenGL -w
 TRANSLATIOM, SCALING AND ROTATION USING KEYBOARD:
 	-To scale the model use the '+' and '-' keys.
 	-To translate the model use the arrow keys.
@@ -54,7 +56,7 @@ using namespace std;
 
 #define PI 3.14159265		//Constant that defines the value of pi
 
-/*  Create checkerboard texture  */
+//height and width of the ppm image used as texture
 #define checkImageWidth 610
 #define checkImageHeight 458
 
@@ -89,21 +91,12 @@ GLfloat  TranslationMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
 GLfloat  TranslationMatrixToOrigin[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
 GLfloat  ScalingMatrix[NUMBER_OF_AXIS][NUMBER_OF_AXIS];
 
+//Reads ppm file and translate it to a matrix rgb representation.
 void makeCheckImage(void)
 {
    int i, j, c;
     char keyword[2];
     string comment;
-    //Generating Checker Pattern
-   /*for (i = 0; i < checkImageHeight; i++) {
-      for (j = 0; j < checkImageWidth; j++) {
-         c = ((((i&0x8)==0)^((j&0x8))==0))*255;
-         checkImage[i][j][0] = (GLubyte) c;
-         checkImage[i][j][1] = (GLubyte) c;
-         checkImage[i][j][2] = (GLubyte) c;
-         checkImage[i][j][3] = (GLubyte) 255;
-      }
-   }*/
 
    //Reading texture file
     ifstream inFile;
@@ -113,40 +106,27 @@ void makeCheckImage(void)
         cout << "Unable to open file";
         exit(1); // terminate with error
     }
-
-    inFile >> keyword;
+    //Reading of PPM file
+    inFile >> keyword; //PPM FILE KEYWORD
     cout << keyword << " ";
-    /*inFile >> comment;
-    cout << comment << " ";
-    inFile >> comment;
-    cout << comment << " ";
-    inFile >> comment;
-    cout << comment << " ";
-    inFile >> comment;
-    cout << comment << " ";*/
-
-    inFile >> width;
+    inFile >> width; //WIDTH VALUE
     cout << "width: " << width;
-    inFile >> height;
+    inFile >> height; //HEIGHT VALUE
     cout << "height" << height << "\n";
-    inFile >> colours;
+    inFile >> colours; //COLOR CONFIG (255)
     cout << "coulours" << colours;
     cout << endl;
+    //Begin reading color matrix
     for (i = 0; i < height; i++) {
       for (j = 0; j < width; j++) {
          inFile >> c;
          checkImage[height-i][j][0] = (GLubyte) c;
-         //cout << c << " ";
          inFile >> c;
          checkImage[height-i][j][1] = (GLubyte) c;
-         //cout << c << " ";
          inFile >> c;
          checkImage[height-i][j][2] = (GLubyte) c;
-         //cout << c << " ";
          checkImage[height-i][j][3] = (GLubyte) 255;
-         //cout << "255n";
       }
-      //cout << endl;
    }
    inFile.close();
 }
@@ -192,7 +172,7 @@ void rotateMatrix(GLfloat matrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS], GLfloat Res
 	GLfloat matrixAux[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
 	double  angleRadX = angleX * (PI / 180); //Converting degrees into radians
-
+	
 	//Rotating in X axis
 
 	initMatrix(RotationMatrix);
@@ -236,27 +216,19 @@ void initGL() {
 	glEnable(GL_DEPTH_TEST);
 
    makeCheckImage();
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkImageWidth,
                 checkImageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                 checkImage);  // Nice perspective corrections
 
 	makeCheckImage();
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
- 
-   //gluBuild2DMipmaps(GL_TEXTURE_2D,1,checkImageWidth,checkImageHeight,GL_RGBA,GL_UNSIGNED_BYTE,checkImage);
-
 }
 
 void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
 	
-
+	//Loads the configured texture, only to be applied on the building's main structure. 
 	glEnable(GL_TEXTURE_2D);
+
 	glBegin(GL_QUADS);
 	//#############
 	//MAIN BUILDING
@@ -303,7 +275,9 @@ void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
 	glEnd();  // End of MAIN BUILDING
 
+	//Texture is unloaded to enable colors on next structures
 	glDisable(GL_TEXTURE_2D);
+	
 	//####################
 	//LOBBY ENTRANCE
 	//####################
@@ -445,33 +419,17 @@ void display() {
 
 	// Render a color-cube consisting of 6 quads with different colors
 	glLoadIdentity();                 // Reset the model-view matrix
-	//glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
 
-	   // Top face (y = 1.0f)
-	   // Define vertices in counter-clockwise (CCW) order with normal pointing out
-
-	//Vector matrix representing the vertexes of the polygons, defined in counter-clockwise position. 
-
-	 
 	//Initializing matrix
 	initMatrix(TransformationMatrix);
 	initMatrix(TranslationMatrix);
 	initMatrix(TranslationMatrixToOrigin);
 	initMatrix(ScalingMatrix);
 
-
 	//Scaling factors for the transformation matrix
 	ScalingMatrix[0][0] = -1 + scaleModel[0];   //SCALE ON X
 	ScalingMatrix[1][1] = -1 + scaleModel[1];	//SCALE ON Y
 	ScalingMatrix[2][2] = -1 + scaleModel[2];	//SCALE ON Z
-
-	//Values are added to the transf matrix
-
-	//Translation units for the transformation matrix
-	//TranslationMatrix[0][3] = 0 + translationXAxis;	//TRANSLATION ON X
-	//TranslationMatrix[1][3] = 0 + translationYAxis;	//TRANSLATION ON Y
-	//TranslationMatrix[2][3] = 0 + translationZAxis;	//TRANSLATION ON Z
-
 
 	GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS];
 
@@ -499,44 +457,25 @@ void display() {
 	//Rotates the matrix, parameters in degrees x,y,z
 	rotateMatrix(ResultMatrixAux, ResultMatrix, 180 + rotateModel[0], 40 + rotateModel[1], 0 + rotateModel[2]);
 
-	gluLookAt(	0.0f, 0.0f,  10.0f,
-				0.0f, 1.5f,  3.0f,
-				0.0f, 1.0f,  0.0f);
+	//Configures the view. 
+	gluLookAt(	0.0f, 0.0f,  10.0f, //Position of viewer's eye in x, y, z
+				0.0f, 1.5f,  3.0f,	//Position of object of reference in x, y, z
+				0.0f, 1.0f,  0.0f);	//Position of UP vector 
 	
 	renderFigure(ResultMatrix);
-	//glutSolidTeapot(1);
-	
-	
 	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
-	//glutSolidTeapot(1);
-
 }
 
 /* Handler for window re-size event. Called back when the window first appears and
    whenever the window is re-sized with its new width and height */
 void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
-  /* // Compute aspect ratio of the new window
-	if (height == 0) height = 1;                // To prevent divide by 0
-	GLfloat aspect = (GLfloat)width / (GLfloat)height;
 
-	// Set the viewport to cover the new window
-	glViewport(0, 0, width, height);
-
-	// Set the aspect ratio of the clipping volume to match the viewport
-	glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
-	glLoadIdentity();             // Reset
-	// Enable perspective projection with fovy, aspect, zNear and zFar
-	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-	glTranslatef(0.0f, 0.0f, -10.0f);
-	glRotatef(10, 0, 1, 0);
-	*/
-
-	glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-   gluPerspective(60.0, (GLfloat) width/(GLfloat) height, 1.0, 100.0);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
+	glMatrixMode(GL_PROJECTION); // To operate on the Projection matrix
+	glLoadIdentity(); // Reset
+	glViewport(0, 0, (GLsizei) width, (GLsizei) height);
+	gluPerspective(60.0, (GLfloat) width/(GLfloat) height, 1.0, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 //Function that handles special keys like arrow keys
@@ -554,12 +493,12 @@ void keySpecial(int key, int x, int  y) {
 		break;
 
 	case GLUT_KEY_UP:		//Tanslate in y up
-		translateModel[1] -= TRANSLATION_VEL;
+		translateModel[1] += TRANSLATION_VEL;
 		printf("\nKey ^ arrow");
 		break;
 
 	case GLUT_KEY_DOWN:		//Tanslate in y down
-		translateModel[1] += TRANSLATION_VEL;
+		translateModel[1] -= TRANSLATION_VEL;
 		printf("\nKey v arrow");
 		break;
 	}
@@ -660,7 +599,6 @@ void Motion(GLint x, GLint y) {
 
 }
 
-
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
 
@@ -677,10 +615,10 @@ int main(int argc, char** argv) {
 	glutCreateWindow(title);          // Create window with the given title
 	glutDisplayFunc(display);       // Register callback handler for window re-paint event
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
-	glutKeyboardFunc(keyDown);
-	glutSpecialFunc(keySpecial);
-	glutMouseFunc(mouse);
-	glutMotionFunc(Motion);
+	glutKeyboardFunc(keyDown);		// Configures letter keys (WASD and + -)
+	glutSpecialFunc(keySpecial);	// Configures special keys (up, down , left, right)
+	glutMouseFunc(mouse);			// Gets the mouse position where clicked
+	glutMotionFunc(Motion);			// Mouse movement detection for rotation displacement
 	initGL();                       // Our own OpenGL initialization
 	glutIdleFunc(display);
 	glutMainLoop();                 // Enter the infinite event-processing 
