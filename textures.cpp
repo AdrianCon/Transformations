@@ -55,8 +55,8 @@ using namespace std;
 #define PI 3.14159265		//Constant that defines the value of pi
 
 /*  Create checkerboard texture  */
-#define checkImageWidth 300
-#define checkImageHeight 300
+#define checkImageWidth 610
+#define checkImageHeight 458
 
 static GLubyte checkImage[checkImageHeight][checkImageWidth][4];
 int width,height,colours;
@@ -108,7 +108,7 @@ void makeCheckImage(void)
    //Reading texture file
     ifstream inFile;
 
-    inFile.open("./colorsTest.ppm");
+    inFile.open("./building.ppm");
     if (!inFile) {
         cout << "Unable to open file";
         exit(1); // terminate with error
@@ -256,99 +256,99 @@ void initGL() {
 void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
 	
 
-	
+	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 	//#############
 	//MAIN BUILDING
 	//#############
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][0], ResultMatrix[1][0], ResultMatrix[2][0]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
 
 	// Bottom face 
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][4], ResultMatrix[1][4], ResultMatrix[2][4]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][7], ResultMatrix[1][7], ResultMatrix[2][7]);
 
 	// Front face  (z = 1.0f)
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][0], ResultMatrix[1][0], ResultMatrix[2][0]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][4], ResultMatrix[1][4], ResultMatrix[2][4]);
 
 	// Back face (z = -1.0f)
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][7], ResultMatrix[1][7], ResultMatrix[2][7]);
 
 	// Left face (x = -1.0f)
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][0], ResultMatrix[1][0], ResultMatrix[2][0]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][3], ResultMatrix[1][3], ResultMatrix[2][3]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][7], ResultMatrix[1][7], ResultMatrix[2][7]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][4], ResultMatrix[1][4], ResultMatrix[2][4]);
 
 	// Right face (x = 1.0f)
-	//glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
 	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][6], ResultMatrix[1][6], ResultMatrix[2][6]);
 	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][5], ResultMatrix[1][5], ResultMatrix[2][5]);
 	glEnd();  // End of MAIN BUILDING
 
-	
+	glDisable(GL_TEXTURE_2D);
 	//####################
 	//LOBBY ENTRANCE
 	//####################
 	glBegin(GL_QUADS);
 	//Top face 
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 
 	// Bottom face 
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
 
 	// Front face 
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 
 	// Back face
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 
 	// Left face 
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][1], ResultMatrix[1][1], ResultMatrix[2][1]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][2], ResultMatrix[1][2], ResultMatrix[2][2]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
 
 	// Right face 
-	//glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.6f, 0.271f, 0.0f);
 	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][8], ResultMatrix[1][8], ResultMatrix[2][8]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][9], ResultMatrix[1][9], ResultMatrix[2][9]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
 	glEnd();  // End of LOBBY ENTRANCE
 
 	//############
@@ -356,46 +356,46 @@ void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
 	//############
 	glBegin(GL_QUADS);
 	//Top face 
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+	glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+	glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
+	glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
 
 	// Bottom face 
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+	glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
 
 	// Front face 
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+	glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+	glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
 
 	// Back face
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+	glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
+	glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
 
 	// Left face
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][16], ResultMatrix[1][16], ResultMatrix[2][16]);
+	glVertex3f(ResultMatrix[0][19], ResultMatrix[1][19], ResultMatrix[2][19]);
+	glVertex3f(ResultMatrix[0][23], ResultMatrix[1][23], ResultMatrix[2][23]);
+	glVertex3f(ResultMatrix[0][20], ResultMatrix[1][20], ResultMatrix[2][20]);
 
 	// Right face
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glVertex3f(ResultMatrix[0][17], ResultMatrix[1][17], ResultMatrix[2][17]);
+	glVertex3f(ResultMatrix[0][18], ResultMatrix[1][18], ResultMatrix[2][18]);
+	glVertex3f(ResultMatrix[0][22], ResultMatrix[1][22], ResultMatrix[2][22]);
+	glVertex3f(ResultMatrix[0][21], ResultMatrix[1][21], ResultMatrix[2][21]);
 	glEnd();  // End of TERRACE
 
 	//##########
@@ -403,37 +403,37 @@ void renderFigure(GLfloat ResultMatrix[NUMBER_OF_AXIS][NUMBER_OF_VECTORS]) {
 	//##########
 	glBegin(GL_QUADS);
 	//Top face
-	//glColor3f(1.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+	glColor3f(0.4f, 1.0f, 1.0f);
+	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+	glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
 
 	// Bottom face 
-	//glColor3f(1.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glColor3f(0.4f, 1.0f, 1.0f);
+	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+	glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
 
 	// Front face 
-	//glColor3f(1.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+	glColor3f(0.4f, 1.0f, 1.0f);
+	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+	glVertex3f(ResultMatrix[0][11], ResultMatrix[1][11], ResultMatrix[2][11]);
+	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
 	// Back face 
-	//glColor3f(1.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+	glColor3f(0.4f, 1.0f, 1.0f);
+	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glVertex3f(ResultMatrix[0][12], ResultMatrix[1][12], ResultMatrix[2][12]);
+	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 
 	// Left face
-	//glColor3f(1.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0, 0.0); glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
-	glTexCoord2f(0.0, 1.0); glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
-	glTexCoord2f(1.0, 1.0); glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
-	glTexCoord2f(1.0, 0.0); glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
+	glColor3f(0.4f, 1.0f, 1.0f);
+	glVertex3f(ResultMatrix[0][10], ResultMatrix[1][10], ResultMatrix[2][10]);
+	glVertex3f(ResultMatrix[0][13], ResultMatrix[1][13], ResultMatrix[2][13]);
+	glVertex3f(ResultMatrix[0][15], ResultMatrix[1][15], ResultMatrix[2][15]);
+	glVertex3f(ResultMatrix[0][14], ResultMatrix[1][14], ResultMatrix[2][14]);
 	
 	glEnd();  // End of LOBBY ROOF
 }
@@ -499,14 +499,14 @@ void display() {
 	//Rotates the matrix, parameters in degrees x,y,z
 	rotateMatrix(ResultMatrixAux, ResultMatrix, 180 + rotateModel[0], 40 + rotateModel[1], 0 + rotateModel[2]);
 
-	gluLookAt(	0.0f, 0.0f,  5.0f,
-				0.0f, 0.0f,  0.0f,
+	gluLookAt(	0.0f, 0.0f,  10.0f,
+				0.0f, 1.5f,  3.0f,
 				0.0f, 1.0f,  0.0f);
-	glEnable(GL_TEXTURE_2D);
+	
 	renderFigure(ResultMatrix);
 	//glutSolidTeapot(1);
 	
-	glDisable(GL_TEXTURE_2D);
+	
 	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 	//glutSolidTeapot(1);
 
