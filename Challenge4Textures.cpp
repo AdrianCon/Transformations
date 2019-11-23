@@ -50,7 +50,7 @@ using namespace std;
 
 #define ROTATION_VEL 10		//Constant that defines the velocity of rotation
 #define TRANSLATION_VEL 1	//Constant that defines the velocity of translation
-#define SCALE_VEL 10		//Constant that defines the velocity of scaling
+#define SCALE_VEL 0.1		//Constant that defines the velocity of scaling
 
 #define PI 3.14159265		//Constant that defines the value of pi
 
